@@ -1,6 +1,6 @@
 {
   "name": "fczbkk-template",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Simple template object that returns Element or DocumentFragment.",
   "repository": {
     "type": "git",
