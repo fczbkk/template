@@ -4,7 +4,7 @@
   "description": "Simple template object that returns Element or DocumentFragment.",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/fczbkk/fczbkk-template.git"
+    "url": "git+ssh://git@github.com/fczbkk/template.git"
   },
   "author": {
     "name": "Riki Fridrich",
@@ -13,9 +13,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fczbkk/fczbkk-template/issues"
+    "url": "https://github.com/fczbkk/template/issues"
   },
-  "homepage": "https://github.com/fczbkk/fczbkk-template#readme",
+  "homepage": "https://github.com/fczbkk/template#readme",
   "scripts": {
     "cleanup": "rimraf temp lib",
     "prebuild": "npm run test && npm run cleanup",
