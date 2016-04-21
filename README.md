@@ -2,6 +2,27 @@
 
 Simple template object that outputs DOM node.
 
+## How to use
+
+```javascript
+// setup the template instance
+var my_template = new Template();
+my_template.setContent('<p>Hello, my name is %name%.</p>');
+my_template.setData({name: 'Riki Fridrich'});
+
+// get the content as HTML
+my_template.getHtml();  // --> <p>Hello, my name is Riki Fridrich.</p>
+
+// get the DOM Node
+my_template.getDom();  // --> same as above, but DOM instead of string
+
+// you can even define default values
+var my_template = new Template();
+my_template.setContent('<p>%greeting|Hi%, my name is %name|John Doe%.</p>');
+my_template.setData({greeting: 'Hello'});
+my_template.getHtml();  // --> <p>Hello, my name is John Doe.</p>
+```
+
 ## Documentation
 
 ### Template
@@ -16,7 +37,7 @@ Create template object.
 
 -   `content` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)=(default '')** Content of the template. Variable names wrapped in delimiters will be replaced with values from `data`.
 -   `data` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)=(default {})** Keys wrapped in delimiters will be replaced by values.
--   `custom_options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)=(default {})** Properties defined here will replace default options.
+-   `custom_options` **TemplateOptions=(default {})** Properties defined here will replace default options.
 
 #### getDom
 
@@ -70,13 +91,15 @@ Returns **Template**
 
 #### setOptions
 
-Set options of the template. So far the only options are `delimiter_start` and `delimiter_end`.
+Set options of the template.
 
 **Parameters**
 
 -   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)=(default {})** 
 
 Returns **Template** 
+
+### TemplateOptions
 
 ## Bug reports, feature requests and contact
 

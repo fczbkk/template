@@ -58,6 +58,11 @@ describe('Template', function() {
       expect(x.options.delimiter_end).toEqual('%');
     });
 
+    it('should use | as default value delimiter by default', function () {
+      const x = new Template();
+      expect(x.options.delimiter_separator).toEqual('\\|');
+    });
+
     it('should set data', function() {
       const x = new Template();
       x.setData({bbb: 'ccc'});
@@ -82,6 +87,21 @@ describe('Template', function() {
       expect(x.getHtml()).toEqual('bbb bbb');
     });
 
+    it('should use default values', function () {
+      const x = new Template();
+      x.setContent('%aaa% %bbb|ccc% %xxx%');
+      x.setData({aaa: 'bbb'});
+      expect(x.getHtml()).toEqual('bbb ccc %xxx%');
+    });
+
+    it('should use default values for each instance', function () {
+      const x = new Template();
+      x.setContent('%aaa|bbb% %aaa|ccc%');
+      expect(x.getHtml()).toEqual('bbb ccc');
+      x.setData({aaa: 'ddd'});
+      expect(x.getHtml()).toEqual('ddd ddd');
+    });
+
     it('should use customizable delimiters', function () {
       const x = new Template();
       x.setContent('aaabbbccc');
@@ -91,6 +111,22 @@ describe('Template', function() {
         delimiter_end: 'ccc'
       });
       expect(x.getHtml()).toEqual('xxx');
+    });
+
+    it('should use customizable default value delimiter', function () {
+      const x = new Template();
+      x.setContent('%aaabbbccc%');
+      x.setOptions({
+        delimiter_separator: 'bbb'
+      });
+      expect(x.getHtml()).toEqual('ccc');
+    });
+
+    it('should leave content between delimiters as is', function () {
+      const x = new Template();
+      x.setContent('%aaa% %bbb% %ccc%');
+      x.setData({bbb: 'xxx'});
+      expect(x.getHtml()).toEqual('%aaa% xxx %ccc%');
     });
 
   });

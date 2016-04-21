@@ -1,6 +1,17 @@
+import {
+  escapeForRegExp,
+  getChildrenAsFragment,
+  getPlaceholders,
+  getPlaceholderData
+} from './utilities';
+
+/**
+ * @typedef {{delimiter_start: string, delimiter_end: string, delimiter_separator: string}} TemplateOptions
+ */
 const default_options = {
   delimiter_start: '%',
-  delimiter_end: '%'
+  delimiter_end: '%',
+  delimiter_separator: '|'
 };
 
 /**
@@ -12,9 +23,10 @@ export default class Template {
    * Create template object.
    * @param {string} content - Content of the template. Variable names wrapped in delimiters will be replaced with values from `data`.
    * @param {Object} data - Keys wrapped in delimiters will be replaced by values.
-   * @param {Object} custom_options - Properties defined here will replace default options.
+   * @param {TemplateOptions} custom_options - Properties defined here will replace default options.
    */
   constructor (content = '', data = {}, custom_options = {}) {
+    this.default_data = {};
     this.data = {};
     this.setData(data);
 
@@ -53,11 +65,17 @@ export default class Template {
   }
 
   /**
-   * Set options of the template. So far the only options are `delimiter_start` and `delimiter_end`.
+   * Set options of the template.
    * @param {Object} options
    * @returns {Template}
    */
   setOptions (options = {}) {
+    const re_options = ['delimiter_start', 'delimiter_end', 'delimiter_separator'];
+    re_options.forEach((item) => {
+      if (typeof options[item] !== 'undefined') {
+        options[item] = escapeForRegExp(options[item]);
+      }
+    });
     Object.assign(this.options, options);
     return this;
   }
@@ -73,17 +91,21 @@ export default class Template {
    */
   getHtml () {
     let result = this.content;
+    const placeholders = getPlaceholders(this.content, this.options);
 
-    Object.keys(this.data).forEach((key) => {
-      const re_content = [
-        this.options.delimiter_start,
-        key,
-        this.options.delimiter_end
-      ].join('');
-      const re = new RegExp(re_content, 'g');
-      result = result.replace(re, this.data[key]);
+    placeholders.forEach((placeholder) => {
+      let {key, value} = getPlaceholderData(placeholder, this.options);
+
+      // use provided value if it was defined, otherwise use default one
+      if (typeof this.data[key] !== 'undefined') {
+        value = this.data[key];
+      }
+
+      if (typeof value !== 'undefined') {
+        result = result.replace(placeholder, value);
+      }
     });
-
+    
     return result;
   }
 
@@ -92,24 +114,13 @@ export default class Template {
    * @returns {Element|DocumentFragment}
    */
   getDom () {
-    let result;
-
     const elm = document.createElement('div');
+
     elm.innerHTML = this.getHtml();
 
-    if (elm.childNodes.length > 1) {
-      // multiple elements are returned as document fragment
-      result = document.createDocumentFragment();
-      let child_elm;
-      while (child_elm = elm.firstChild) {
-        result.appendChild(child_elm);
-      }
-    } else {
-      // single element is returned as is
-      result = elm.childNodes[0];
-    }
-
-    return result;
+    return (elm.childNodes.length > 1)
+      ? getChildrenAsFragment(elm)
+      : elm.childNodes[0];
   }
 
 }
